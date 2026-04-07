@@ -1,120 +1,99 @@
 import java.util.Scanner;
 
-class Gremio {
-
-    private String[] nombres;
-    private int[] rangos;
-    private int contador;
-    private int capacidad;
-
-    // Constructor
-    public Gremio(int capacidad) {
-        this.capacidad = capacidad;
-        nombres = new String[capacidad];
-        rangos = new int[capacidad];
-        contador = 0;
-    }
-
-    // Método para agregar miembro
-    public void agregar(String nombre, int rango) {
-        if (contador >= capacidad) {
-            System.out.println("❌ No se pueden agregar más miembros (agenda llena).");
-            return;
-        }
-
-        if (nombre == null || nombre.trim().isEmpty()) {
-            System.out.println("❌ Nombre inválido.");
-            return;
-        }
-
-        nombres[contador] = nombre;
-        rangos[contador] = rango;
-        contador++;
-
-        System.out.println("✅ Miembro agregado correctamente.");
-    }
-
-    // Método para listar miembros
-    public void listar() {
-        if (contador == 0) {
-            System.out.println("📭 No hay miembros registrados.");
-            return;
-        }
-
-        System.out.println("\n📜 Lista del Gremio:");
-        for (int i = 0; i < contador; i++) {
-            System.out.println((i + 1) + ". Nombre: " + nombres[i] + " | Rango: " + rangos[i]);
-        }
-    }
-
-    // Método para buscar miembro
-    public void buscar(String nombre) {
-        boolean encontrado = false;
-
-        for (int i = 0; i < contador; i++) {
-            if (nombres[i].equalsIgnoreCase(nombre)) {
-                System.out.println("🔍 Encontrado: " + nombres[i] + " | Rango: " + rangos[i]);
-                encontrado = true;
-                break;
-            }
-        }
-
-        if (!encontrado) {
-            System.out.println("❌ Miembro no encontrado.");
-        }
-    }
-}
-
+/**
+ * Clase principal: punto de entrada del programa.
+ * Menú interactivo con Scanner para probar todas las funcionalidades.
+ */
 public class Main {
+
     public static void main(String[] args) {
 
-        Scanner sc = new Scanner(System.in);
-        Gremio gremio = new Gremio(5); // Capacidad máxima
+        AgendaGremio agenda = new AgendaGremio();
+        Scanner scanner     = new Scanner(System.in);
 
-        int opcion;
+        // ── Datos de prueba precargados ──────────────────
+        System.out.println("\n══════════════════════════════════════════");
+        System.out.println("   INICIALIZANDO AGENDA DEL GREMIO...");
+        System.out.println("══════════════════════════════════════════");
+
+        agenda.agregar("Arlan Swordbreaker", "Maestro");
+        agenda.agregar("Lyria Moonwhisper", "Experta");
+        agenda.agregar("Torin Ashblade",    "Experto");
+        agenda.agregar("Nessa Brightflame", "Aprendiz");
+        agenda.agregar("Drak Ironfoot",     "Maestro");
+        agenda.agregar("Selyria Voss",      "Novato");
+        agenda.agregar("Borin Deepaxe",     "Aprendiz");
+
+        // Prueba de validaciones
+        agenda.agregar("",                  "Maestro");     // nombre vacío
+        agenda.agregar("Arlan Swordbreaker","Novato");      // nombre duplicado
+
+        // ── Menú principal ───────────────────────────────
+        int opcion = -1;
 
         do {
-            System.out.println("\n=== AGENDA DEL GREMIO ===");
-            System.out.println("1. Agregar miembro");
-            System.out.println("2. Listar miembros");
-            System.out.println("3. Buscar miembro");
-            System.out.println("4. Salir");
-            System.out.print("Seleccione una opción: ");
+            System.out.println("\n╔══════════════════════════════════╗");
+            System.out.println("║     ⚔  GREMIO DE AVENTUREROS  ⚔  ║");
+            System.out.println("╠══════════════════════════════════╣");
+            System.out.println("║  1. Agregar miembro              ║");
+            System.out.println("║  2. Listar todos los miembros    ║");
+            System.out.println("║  3. Buscar por nombre            ║");
+            System.out.println("║  4. Buscar por rango             ║");
+            System.out.println("║  0. Salir                        ║");
+            System.out.println("╚══════════════════════════════════╝");
+            System.out.print("  Elige una opción: ");
 
-            opcion = sc.nextInt();
-            sc.nextLine(); // limpiar buffer
+            // Validación de entrada del menú
+            if (scanner.hasNextInt()) {
+                opcion = scanner.nextInt();
+                scanner.nextLine(); // limpiar buffer
+            } else {
+                System.out.println("[ERROR] Ingresa un número válido.");
+                scanner.nextLine();
+                continue;
+            }
 
             switch (opcion) {
-                case 1:
-                    System.out.print("Ingrese nombre: ");
-                    String nombre = sc.nextLine();
 
-                    System.out.print("Ingrese rango (número): ");
-                    int rango = sc.nextInt();
+                case 1: // ── AGREGAR ──────────────────────────────
+                    System.out.println("\n── Agregar nuevo miembro ──");
+                    System.out.print("Nombre: ");
+                    String nombre = scanner.nextLine();
 
-                    gremio.agregar(nombre, rango);
+                    System.out.println("Rangos disponibles: Novato | Aprendiz | Experto | Maestro | Leyenda");
+                    System.out.print("Rango: ");
+                    String rango = scanner.nextLine();
+
+                    agenda.agregar(nombre, rango);
                     break;
 
-                case 2:
-                    gremio.listar();
+                case 2: // ── LISTAR ───────────────────────────────
+                    agenda.listar();
                     break;
 
-                case 3:
-                    System.out.print("Ingrese nombre a buscar: ");
-                    String buscar = sc.nextLine();
-                    gremio.buscar(buscar);
+                case 3: // ── BUSCAR POR NOMBRE ────────────────────
+                    System.out.print("\nIngresa el nombre a buscar: ");
+                    String buscarNombre = scanner.nextLine();
+                    agenda.buscarPorNombre(buscarNombre);
                     break;
 
-                case 4:
-                    System.out.println("👋 Saliendo del sistema...");
+                case 4: // ── BUSCAR POR RANGO ─────────────────────
+                    System.out.println("\nRangos: Novato | Aprendiz | Experto | Maestro | Leyenda");
+                    System.out.print("Ingresa el rango a buscar: ");
+                    String buscarRango = scanner.nextLine();
+                    agenda.buscarPorRango(buscarRango);
+                    break;
+
+                case 0: // ── SALIR ─────────────────────────────────
+                    System.out.println("\n¡Hasta la próxima aventura, camarada!\n");
                     break;
 
                 default:
-                    System.out.println("❌ Opción inválida.");
+                    System.out.println("[ERROR] Opción no válida. Elige entre 0 y 4.");
             }
 
-        } while (opcion != 4);
+        } while (opcion != 0);
 
-        sc.close();
+        scanner.close();
     }
 }
